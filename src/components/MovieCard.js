@@ -1,3 +1,5 @@
+import "../css/MovieCard.css"
+
 const MovieCard = ({movie}) => {
 
     const hundleFavoriteClick = () => {
