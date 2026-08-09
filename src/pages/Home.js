@@ -1,16 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import "../css/Home.css"
+import { searchMovies , getPopularMovies } from "../services/api";
 
 const Home = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [movies, setMovies] = useState([]);
+    const [error, setError] = useState(null);    
+    const [loading, setLoading] = useState(true);
 
-    const movies=[
-        {id:1, title:"La vie Scholaire" , release_date:"2019"},
-        {id:2, title:"CREED" , release_date:"2020"},
-        {id:3, title:"CREED II" , release_date:"2021"},
-        {id:4, title:"CARS" , release_date:"2016"}    ]
+    useEffect(() => {
+        const loadPopularMovies = async () => {
+            try {
+                const popularMovies = await getPopularMovies();
+                setMovies(popularMovies);
+            } catch (err){ 
+                console(err)
+                setError("Can't Load movie!")
+            }
+            finally {setLoading(false)}
+        }
+        loadPopularMovies();
+    }, [])
 
     const hundleSeach = (e) => {
         e.preventDefault();
