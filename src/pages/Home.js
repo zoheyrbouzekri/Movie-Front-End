@@ -24,10 +24,25 @@ const Home = () => {
         loadPopularMovies();
     }, [])
 
-    const hundleSeach = (e) => {
+    const hundleSeach = async (e) => {
         e.preventDefault();
-        alert(searchQuery);
-        setSearchQuery("")
+        if(!searchQuery.trim()) return
+        if (loading) return
+
+        setLoading(true)
+
+        try{
+            const searchResults = await searchMovies(searchQuery);
+            setMovies(searchResults)
+            setError(null)
+        }
+        catch(err){
+            console.log(err)
+            setError("Failed to search Movies!")
+        }
+        finally{
+            setLoading(false)
+        }
     }
 
     return ( 
@@ -36,6 +51,8 @@ const Home = () => {
             <input type="text" placeholder="Search a film here!" className="search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
                 <button type="submit" className="search-button">Search</button>
             </form>
+            {loading && <div className="lodaing">Loading...</div> }
+            {error && <div>{error}</div>}
             <div className="movies-grid">
                 {movies.map((movie) => (
                 movie.title.toLowerCase().startsWith(searchQuery.toLocaleLowerCase()) && (
